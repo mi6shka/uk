@@ -3,7 +3,9 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
   <title>Опрос</title>
 
   <style>
@@ -11,73 +13,79 @@
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
       margin: 0;
-      padding: 24px;
-      background: #ffffff;
+      padding: 0;
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+
+    body {
+      background: #FAF9FC;
       font-family: Inter, "Segoe UI", Arial, sans-serif;
       color: #393442;
     }
 
     .poll {
-      max-width: 620px;
-      margin: 0 auto;
-      padding: 28px;
-      background: #ffffff;
-      border: 1px solid #e9e3f0;
+      width: 100%;
+      padding: 26px;
+      background: #FAF9FC;
+      border: 1px solid #E2D9EE;
       border-radius: 18px;
+      height: auto;
+      overflow: visible;
     }
 
     .poll-label {
-      color: #7958a7;
+      margin-bottom: 14px;
+      color: #7958A7;
       font-size: 13px;
       font-weight: 500;
       letter-spacing: 0.5px;
-      margin-bottom: 14px;
     }
 
     .poll-title {
-      margin: 0 0 25px;
-      color: #603f99;
+      margin: 0 0 24px;
+      color: #603F99;
       font-size: 24px;
       font-weight: 600;
-      line-height: 1.4;
+      line-height: 1.35;
     }
 
     .option {
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      margin-bottom: 19px;
-      cursor: pointer;
+      margin-bottom: 18px;
       font-size: 16px;
-      font-weight: 400;
       line-height: 1.5;
+      cursor: pointer;
     }
 
     .option input {
-      margin-top: 5px;
-      accent-color: #603f99;
-      width: 17px;
-      height: 17px;
+      width: 18px;
+      height: 18px;
+      margin: 3px 0 0;
       flex-shrink: 0;
+      accent-color: #603F99;
       cursor: pointer;
     }
 
     .button-wrap {
       display: flex;
       justify-content: center;
-      margin-top: 28px;
+      margin-top: 26px;
     }
 
     .vote-button {
       min-width: 195px;
-      padding: 14px 25px;
+      padding: 14px 26px;
       border: none;
       border-radius: 50px;
-      background: #603f99;
-      color: #ffffff;
-      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: #603F99;
+      color: #FFFFFF;
+      font-family: inherit;
       font-size: 16px;
       font-style: normal;
       font-weight: 600;
@@ -89,9 +97,9 @@
       background: #503282;
     }
 
-    .vote-button:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
+    .vote-button:focus-visible {
+      outline: 3px solid #B8A6D8;
+      outline-offset: 3px;
     }
 
     .results {
@@ -100,19 +108,20 @@
 
     .total {
       margin-bottom: 22px;
-      color: #603f99;
+      color: #603F99;
       font-size: 16px;
       font-weight: 600;
     }
 
     .result-item {
-      margin-bottom: 19px;
+      margin-bottom: 18px;
     }
 
     .result-heading {
       display: flex;
       justify-content: space-between;
-      gap: 14px;
+      align-items: flex-start;
+      gap: 12px;
       margin-bottom: 8px;
       font-size: 15px;
       line-height: 1.5;
@@ -120,31 +129,25 @@
 
     .result-number {
       flex-shrink: 0;
+      color: #603F99;
       font-weight: 600;
-      color: #603f99;
     }
 
     .bar {
-      width: 100%;
       height: 9px;
-      background: #eee8f5;
+      background: #E7E0F0;
       border-radius: 20px;
       overflow: hidden;
     }
 
     .bar-fill {
       height: 100%;
-      width: 0;
-      background: #603f99;
+      background: #603F99;
       border-radius: 20px;
       transition: width 0.4s ease;
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 12px;
-      }
-
       .poll {
         padding: 20px;
       }
@@ -156,13 +159,17 @@
       .option {
         font-size: 16px;
       }
+
+      .result-heading {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="poll">
+  <section class="poll">
     <div class="poll-label">ОПРОС</div>
 
     <h2 class="poll-title">
@@ -190,7 +197,10 @@
 
         <label class="option">
           <input type="radio" name="answer" value="3">
-          <span>руководители департаментов по своим направлениям</span>
+          <span>
+            руководители департаментов
+            по своим направлениям
+          </span>
         </label>
 
         <label class="option">
@@ -211,7 +221,7 @@
       <div id="total" class="total"></div>
       <div id="resultList"></div>
     </div>
-  </div>
+  </section>
 
   <script>
     const options = [
@@ -222,48 +232,60 @@
       "у нас таких ответственных нет"
     ];
 
-    const STORAGE_KEY = "gov_poll_votes_v1";
-    const VOTED_KEY = "gov_poll_voted_v1";
+    const STORAGE_KEY = "gov_poll_votes_v2";
+    const VOTED_KEY = "gov_poll_voted_v2";
 
     function getVotes() {
       try {
-        const stored = JSON.parse(
+        const votes = JSON.parse(
           localStorage.getItem(STORAGE_KEY)
         );
 
         if (
-          Array.isArray(stored) &&
-          stored.length === options.length &&
-          stored.every(
+          Array.isArray(votes) &&
+          votes.length === options.length &&
+          votes.every(
             n => Number.isInteger(n) && n >= 0
           )
         ) {
-          return stored;
+          return votes;
         }
       } catch (error) {
-        // Используем начальные значения.
+        // Если данных нет, начинаем с нуля.
       }
 
       return [0, 0, 0, 0, 0];
     }
 
-    function voteWord(count) {
-      const lastTwo = count % 100;
-      const last = count % 10;
-
-      if (lastTwo >= 11 && lastTwo <= 14) {
+    function voteWord(n) {
+      if (n % 100 >= 11 && n % 100 <= 14) {
         return "голосов";
       }
 
-      if (last === 1) {
+      if (n % 10 === 1) {
         return "голос";
       }
 
-      if (last >= 2 && last <= 4) {
+      if (n % 10 >= 2 && n % 10 <= 4) {
         return "голоса";
       }
 
       return "голосов";
+    }
+
+    function notifyHeight() {
+      const height = Math.ceil(
+        document.documentElement.scrollHeight
+      );
+
+      // Сообщаем высоту внешней странице.
+      window.parent.postMessage(
+        {
+          type: "poll-resize",
+          height: height
+        },
+        "*"
+      );
     }
 
     function showResults() {
@@ -272,19 +294,26 @@
         (sum, count) => sum + count, 0
       );
 
-      document.getElementById("voting").style.display = "none";
-      document.getElementById("results").style.display = "block";
+      document.getElementById("voting")
+        .style.display = "none";
 
-      document.getElementById("total").textContent =
-        `Всего: ${total} ${voteWord(total)} ·`;
+      document.getElementById("results")
+        .style.display = "block";
 
-      const resultList = document.getElementById("resultList");
+      document.getElementById("total")
+        .textContent =
+          `Всего: ${total} ${voteWord(total)} ·`;
+
+      const resultList =
+        document.getElementById("resultList");
+
       resultList.innerHTML = "";
 
       options.forEach((option, index) => {
         const count = votes[index];
-        const percent = total > 0
-          ? Math.round((count / total) * 100)
+
+        const percent = total
+          ? Math.round(count / total * 100)
           : 0;
 
         const item = document.createElement("div");
@@ -313,13 +342,17 @@
         item.append(heading, bar);
         resultList.appendChild(item);
       });
+
+      notifyHeight();
     }
 
     document.getElementById("pollForm")
       .addEventListener("submit", function(event) {
         event.preventDefault();
 
-        if (localStorage.getItem(VOTED_KEY) === "true") {
+        if (
+          localStorage.getItem(VOTED_KEY) === "true"
+        ) {
           showResults();
           return;
         }
@@ -329,7 +362,7 @@
         );
 
         if (!selected) {
-          alert("Пожалуйста, выберите вариант ответа.");
+          alert("Выберите вариант ответа.");
           return;
         }
 
@@ -351,10 +384,15 @@
     if (localStorage.getItem(VOTED_KEY) === "true") {
       showResults();
     }
+
+    window.addEventListener("load", notifyHeight);
+    window.addEventListener("resize", notifyHeight);
+
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(notifyHeight)
+        .observe(document.body);
+    }
   </script>
 
 </body>
 </html>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-<script src='https://zhuzhzha78.github.io/interactive/shablon/iframeResizer.contentWindow.min.js' type="text/javascript"></script>
-
