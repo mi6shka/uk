@@ -27,12 +27,10 @@
 
     .poll {
       width: 100%;
-      height: auto;
       padding: 26px;
       background: #FAF9FC;
       border: 1px solid #E2D9EE;
       border-radius: 18px;
-      overflow: visible;
     }
 
     .poll-label {
@@ -79,25 +77,36 @@
     .vote-button {
       min-width: 195px;
       padding: 14px 26px;
-      background: #603F99;
-      color: #FFFFFF;
       border: none;
       border-radius: 50px;
+      background: #603F99;
+      color: #FFFFFF;
       font-family: inherit;
       font-size: 16px;
-      font-weight: 600;
       font-style: normal;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: background 0.2s;
     }
 
     .vote-button:hover {
       background: #503282;
     }
 
-    .vote-button:focus-visible {
-      outline: 3px solid #B8A6D8;
-      outline-offset: 3px;
+    .return-button {
+      padding: 11px 22px;
+      border: 1px solid #CDBFE0;
+      border-radius: 50px;
+      background: transparent;
+      color: #603F99;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .return-button:hover {
+      background: #F0EAF7;
     }
 
     .results {
@@ -157,7 +166,6 @@
       height: 100%;
       background: #603F99;
       border-radius: 20px;
-      transition: width 0.4s ease;
     }
 
     @media (max-width: 480px) {
@@ -239,8 +247,17 @@
       </div>
 
       <div id="total" class="total"></div>
-
       <div id="resultList"></div>
+
+      <div class="button-wrap">
+        <button
+          class="return-button"
+          id="returnButton"
+          type="button"
+        >
+          Вернуться к опросу
+        </button>
+      </div>
 
     </div>
 
@@ -255,25 +272,25 @@
       "у нас таких ответственных нет"
     ];
 
-    const STORAGE_KEY = "gov_poll_votes_v3";
-    const VOTED_KEY = "gov_poll_voted_v3";
+    const STORAGE_KEY = "gov_poll_votes_v4";
+    const VOTED_KEY = "gov_poll_voted_v4";
 
     function getVotes() {
       try {
-        const votes = JSON.parse(
+        const stored = JSON.parse(
           localStorage.getItem(STORAGE_KEY)
         );
 
         if (
-          Array.isArray(votes) &&
-          votes.length === options.length &&
-          votes.every(n => Number.isInteger(n) && n >= 0)
+          Array.isArray(stored) &&
+          stored.length === options.length &&
+          stored.every(
+            n => Number.isInteger(n) && n >= 0
+          )
         ) {
-          return votes;
+          return stored;
         }
-      } catch (error) {
-        // Используем нулевые значения.
-      }
+      } catch (error) {}
 
       return [0, 0, 0, 0, 0];
     }
@@ -295,14 +312,12 @@
     }
 
     function notifyHeight() {
-      const height = Math.ceil(
-        document.documentElement.scrollHeight
-      );
-
       window.parent.postMessage(
         {
           type: "poll-resize",
-          height: height
+          height: Math.ceil(
+            document.documentElement.scrollHeight
+          )
         },
         "*"
       );
@@ -312,7 +327,7 @@
       const votes = getVotes();
 
       const total = votes.reduce(
-        (sum, count) => sum + count, 0
+        (sum, n) => sum + n, 0
       );
 
       document.getElementById("voting")
@@ -325,16 +340,14 @@
         .textContent =
           `Всего: ${total} ${voteWord(total)} ·`;
 
-      const resultList =
-        document.getElementById("resultList");
-
-      resultList.innerHTML = "";
+      const list = document.getElementById("resultList");
+      list.innerHTML = "";
 
       options.forEach((option, index) => {
         const count = votes[index];
 
         const percent = total
-          ? Math.round((count / total) * 100)
+          ? Math.round(count / total * 100)
           : 0;
 
         const item = document.createElement("div");
@@ -360,9 +373,8 @@
         fill.style.width = `${percent}%`;
 
         bar.appendChild(fill);
-
         item.append(heading, bar);
-        resultList.appendChild(item);
+        list.appendChild(item);
       });
 
       notifyHeight();
@@ -372,38 +384,51 @@
       .addEventListener("submit", function(event) {
         event.preventDefault();
 
-        if (
-          localStorage.getItem(VOTED_KEY) === "true"
-        ) {
-          showResults();
-          return;
-        }
-
         const selected = document.querySelector(
           'input[name="answer"]:checked'
         );
 
-        if (!selected) {
+        if (selected === null) {
           alert("Выберите вариант ответа.");
           return;
         }
 
-        const index = Number(selected.value);
-        const votes = getVotes();
+        // Один голос на браузер.
+        if (
+          localStorage.getItem(VOTED_KEY) !== "true"
+        ) {
+          const index = Number(selected.value);
+          const votes = getVotes();
 
-        votes[index] += 1;
+          votes[index] += 1;
 
-        localStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify(votes)
-        );
+          localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(votes)
+          );
 
-        localStorage.setItem(VOTED_KEY, "true");
+          localStorage.setItem(VOTED_KEY, "true");
+        }
 
         showResults();
       });
 
-    if (localStorage.getItem(VOTED_KEY) === "true") {
+    document.getElementById("returnButton")
+      .addEventListener("click", function() {
+        document.getElementById("results")
+          .style.display = "none";
+
+        document.getElementById("voting")
+          .style.display = "block";
+
+        document.getElementById("pollForm").reset();
+
+        notifyHeight();
+      });
+
+    if (
+      localStorage.getItem(VOTED_KEY) === "true"
+    ) {
       showResults();
     }
 
