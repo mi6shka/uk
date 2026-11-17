@@ -2,386 +2,356 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Опрос</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Опрос</title>
 
-<style>
-* {
-  box-sizing: border-box;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  margin: 0;
-  padding: 25px 15px;
-  background: #f8f6fb;
-  font-family: Inter, "Segoe UI", Arial, sans-serif;
-  color: #302a38;
-  font-weight: 400;
-}
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #ffffff;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: #393442;
+    }
 
-.poll {
-  max-width: 600px;
-  margin: 30px auto;
-  padding: 34px;
-  background: #fff;
-  border: 1px solid #eee9f3;
-  border-radius: 18px;
-  box-shadow: 0 8px 30px rgba(96,63,153,.05);
-}
+    .poll {
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 28px;
+      background: #ffffff;
+      border: 1px solid #e9e3f0;
+      border-radius: 18px;
+    }
 
-.tag {
-  color: #7958a7;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1.8px;
-  margin-bottom: 17px;
-}
+    .poll-label {
+      color: #7958a7;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
 
-h1 {
-  margin: 0 0 25px;
-  font-size: 21px;
-  font-weight: 500;
-  line-height: 1.5;
-  letter-spacing: -.3px;
-}
+    .poll-title {
+      margin: 0 0 25px;
+      color: #603f99;
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
 
-.option {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 14px 15px;
-  margin: 9px 0;
-  border: 1px solid #e6e0ed;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 13px;
-  line-height: 1.55;
-  transition: .2s;
-}
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 19px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
 
-.option:hover {
-  border-color: #a991cb;
-}
+    .option input {
+      margin-top: 5px;
+      accent-color: #603f99;
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
 
-.option:has(input:checked) {
-  border-color: #603F99;
-  background: #f4effa;
-}
+    .button-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 28px;
+    }
 
-.option input {
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  flex-shrink: 0;
-  accent-color: #603F99;
-  cursor: pointer;
-}
+    .vote-button {
+      min-width: 195px;
+      padding: 14px 25px;
+      border: none;
+      border-radius: 50px;
+      background: #603f99;
+      color: #ffffff;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
 
-button {
-  width: 100%;
-  margin-top: 16px;
-  padding: 13px;
-  border: none;
-  border-radius: 10px;
-  background: #603F99;
-  color: white;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-}
+    .vote-button:hover {
+      background: #503282;
+    }
 
-button:hover:not(:disabled) {
-  background: #4e3182;
-}
+    .vote-button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
 
-button:disabled {
-  opacity: .4;
-  cursor: not-allowed;
-}
+    .results {
+      display: none;
+    }
 
-.total {
-  color: #603F99;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 23px;
-}
+    .total {
+      margin-bottom: 22px;
+      color: #603f99;
+      font-size: 16px;
+      font-weight: 600;
+    }
 
-.result {
-  margin-bottom: 20px;
-}
+    .result-item {
+      margin-bottom: 19px;
+    }
 
-.result-line {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-  font-size: 12px;
-  line-height: 1.5;
-}
+    .result-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 8px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
 
-.result-line strong {
-  white-space: nowrap;
-  font-weight: 600;
-}
+    .result-number {
+      flex-shrink: 0;
+      font-weight: 600;
+      color: #603f99;
+    }
 
-.track {
-  height: 8px;
-  background: #eee8f5;
-  border-radius: 8px;
-  overflow: hidden;
-}
+    .bar {
+      width: 100%;
+      height: 9px;
+      background: #eee8f5;
+      border-radius: 20px;
+      overflow: hidden;
+    }
 
-.fill {
-  height: 100%;
-  background: #603F99;
-  border-radius: 8px;
-  transition: width .4s;
-}
+    .bar-fill {
+      height: 100%;
+      width: 0;
+      background: #603f99;
+      border-radius: 20px;
+      transition: width 0.4s ease;
+    }
 
-.foot {
-  margin-top: 17px;
-  color: #89818f;
-  text-align: center;
-  font-size: 11px;
-  line-height: 1.5;
-}
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
 
-[hidden] {
-  display: none !important;
-}
+      .poll {
+        padding: 20px;
+      }
 
-@media (max-width: 480px) {
-  .poll {
-    padding: 22px;
-    margin: 10px auto;
-  }
+      .poll-title {
+        font-size: 21px;
+      }
 
-  h1 {
-    font-size: 18px;
-  }
-}
-</style>
+      .option {
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<main class="poll">
+  <div class="poll">
+    <div class="poll-label">ОПРОС</div>
 
-  <div class="tag">ОПРОС</div>
+    <h2 class="poll-title">
+      Кто у вас в компании сейчас отвечает
+      за уведомления от госорганов?
+    </h2>
 
-  <h1>
-    Кто у вас в компании сейчас отвечает
-    за уведомления от госорганов?
-  </h1>
+    <div id="voting">
+      <form id="pollForm">
 
-  <form id="pollForm">
-    <div id="options"></div>
+        <label class="option">
+          <input type="radio" name="answer" value="0">
+          <span>директор</span>
+        </label>
 
-    <button id="voteButton" type="submit" disabled>
-      Проголосовать
-    </button>
-  </form>
+        <label class="option">
+          <input type="radio" name="answer" value="1">
+          <span>секретарь-ассистент</span>
+        </label>
 
-  <section id="results" hidden aria-live="polite">
-    <div id="total" class="total"></div>
-    <div id="resultList"></div>
-  </section>
+        <label class="option">
+          <input type="radio" name="answer" value="2">
+          <span>мы, юристы</span>
+        </label>
 
-  <div id="foot" class="foot">
-    Выберите один вариант ответа
+        <label class="option">
+          <input type="radio" name="answer" value="3">
+          <span>руководители департаментов по своим направлениям</span>
+        </label>
+
+        <label class="option">
+          <input type="radio" name="answer" value="4">
+          <span>у нас таких ответственных нет</span>
+        </label>
+
+        <div class="button-wrap">
+          <button class="vote-button" type="submit">
+            Проголосовать
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <div id="results" class="results">
+      <div id="total" class="total"></div>
+      <div id="resultList"></div>
+    </div>
   </div>
 
-</main>
+  <script>
+    const options = [
+      "директор",
+      "секретарь-ассистент",
+      "мы, юристы",
+      "руководители департаментов по своим направлениям",
+      "у нас таких ответственных нет"
+    ];
 
-<script>
-const answers = [
-  "директор",
-  "секретарь-ассистент",
-  "мы, юристы",
-  "руководители департаментов по своим направлениям",
-  "у нас таких ответственных нет"
-];
+    const STORAGE_KEY = "gov_poll_votes_v1";
+    const VOTED_KEY = "gov_poll_voted_v1";
 
-const COUNTS_KEY = "gov_poll_counts_v1";
-const VOTE_KEY = "gov_poll_my_vote_v1";
+    function getVotes() {
+      try {
+        const stored = JSON.parse(
+          localStorage.getItem(STORAGE_KEY)
+        );
 
-const form = document.getElementById("pollForm");
-const options = document.getElementById("options");
-const voteButton = document.getElementById("voteButton");
-const results = document.getElementById("results");
-const totalElement = document.getElementById("total");
-const resultList = document.getElementById("resultList");
-const foot = document.getElementById("foot");
+        if (
+          Array.isArray(stored) &&
+          stored.length === options.length &&
+          stored.every(
+            n => Number.isInteger(n) && n >= 0
+          )
+        ) {
+          return stored;
+        }
+      } catch (error) {
+        // Используем начальные значения.
+      }
 
-function getCounts() {
-  try {
-    const stored = JSON.parse(
-      localStorage.getItem(COUNTS_KEY)
-    );
-
-    if (
-      Array.isArray(stored) &&
-      stored.length === answers.length &&
-      stored.every(n => Number.isInteger(n) && n >= 0)
-    ) {
-      return stored;
+      return [0, 0, 0, 0, 0];
     }
-  } catch (error) {}
 
-  return answers.map(() => 0);
-}
+    function voteWord(count) {
+      const lastTwo = count % 100;
+      const last = count % 10;
 
-function getMyVote() {
-  try {
-    const stored = localStorage.getItem(VOTE_KEY);
+      if (lastTwo >= 11 && lastTwo <= 14) {
+        return "голосов";
+      }
 
-    if (stored === null) return null;
+      if (last === 1) {
+        return "голос";
+      }
 
-    const index = Number(stored);
+      if (last >= 2 && last <= 4) {
+        return "голоса";
+      }
 
-    if (
-      Number.isInteger(index) &&
-      index >= 0 &&
-      index < answers.length
-    ) {
-      return index;
+      return "голосов";
     }
-  } catch (error) {}
 
-  return null;
-}
+    function showResults() {
+      const votes = getVotes();
+      const total = votes.reduce(
+        (sum, count) => sum + count, 0
+      );
 
-function pluralVotes(n) {
-  const last = n % 10;
-  const lastTwo = n % 100;
+      document.getElementById("voting").style.display = "none";
+      document.getElementById("results").style.display = "block";
 
-  if (lastTwo >= 11 && lastTwo <= 14) {
-    return "голосов";
-  }
+      document.getElementById("total").textContent =
+        `Всего: ${total} ${voteWord(total)} ·`;
 
-  if (last === 1) return "голос";
-  if (last >= 2 && last <= 4) return "голоса";
+      const resultList = document.getElementById("resultList");
+      resultList.innerHTML = "";
 
-  return "голосов";
-}
+      options.forEach((option, index) => {
+        const count = votes[index];
+        const percent = total > 0
+          ? Math.round((count / total) * 100)
+          : 0;
 
-function createOptions() {
-  answers.forEach((answer, index) => {
-    const label = document.createElement("label");
-    label.className = "option";
+        const item = document.createElement("div");
+        item.className = "result-item";
 
-    const radio = document.createElement("input");
-    radio.type = "radio";
-    radio.name = "answer";
-    radio.value = index;
+        const heading = document.createElement("div");
+        heading.className = "result-heading";
 
-    const text = document.createElement("span");
-    text.textContent = answer;
+        const label = document.createElement("span");
+        label.textContent = option;
 
-    label.append(radio, text);
-    options.appendChild(label);
-  });
-}
+        const number = document.createElement("span");
+        number.className = "result-number";
+        number.textContent = `${count} · ${percent}%`;
 
-function showResults() {
-  const counts = getCounts();
-  const total = counts.reduce((sum, n) => sum + n, 0);
+        heading.append(label, number);
 
-  form.hidden = true;
-  results.hidden = false;
+        const bar = document.createElement("div");
+        bar.className = "bar";
 
-  totalElement.textContent =
-    `Всего: ${total} ${pluralVotes(total)} ·`;
+        const fill = document.createElement("div");
+        fill.className = "bar-fill";
+        fill.style.width = `${percent}%`;
 
-  resultList.replaceChildren();
+        bar.appendChild(fill);
+        item.append(heading, bar);
+        resultList.appendChild(item);
+      });
+    }
 
-  answers.forEach((answer, index) => {
-    const count = counts[index];
+    document.getElementById("pollForm")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
 
-    const percent = total
-      ? Math.round(count / total * 100)
-      : 0;
+        if (localStorage.getItem(VOTED_KEY) === "true") {
+          showResults();
+          return;
+        }
 
-    const row = document.createElement("div");
-    row.className = "result";
+        const selected = document.querySelector(
+          'input[name="answer"]:checked'
+        );
 
-    const line = document.createElement("div");
-    line.className = "result-line";
+        if (!selected) {
+          alert("Пожалуйста, выберите вариант ответа.");
+          return;
+        }
 
-    const name = document.createElement("span");
-    name.textContent = answer;
+        const index = Number(selected.value);
+        const votes = getVotes();
 
-    const value = document.createElement("strong");
-    value.textContent = `${count} · ${percent}%`;
+        votes[index] += 1;
 
-    line.append(name, value);
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(votes)
+        );
 
-    const track = document.createElement("div");
-    track.className = "track";
+        localStorage.setItem(VOTED_KEY, "true");
 
-    const fill = document.createElement("div");
-    fill.className = "fill";
-    fill.style.width = `${percent}%`;
+        showResults();
+      });
 
-    track.appendChild(fill);
-    row.append(line, track);
-    resultList.appendChild(row);
-  });
-
-  foot.textContent =
-    "Анонимное голосование";
-}
-
-createOptions();
-
-form.addEventListener("change", () => {
-  voteButton.disabled = false;
-});
-
-form.addEventListener("submit", event => {
-  event.preventDefault();
-
-  if (getMyVote() !== null) {
-    showResults();
-    return;
-  }
-
-  const selected = form.querySelector(
-    'input[name="answer"]:checked'
-  );
-
-  if (!selected) return;
-
-  const index = Number(selected.value);
-  const counts = getCounts();
-
-  counts[index] += 1;
-
-  try {
-    localStorage.setItem(
-      COUNTS_KEY,
-      JSON.stringify(counts)
-    );
-
-    localStorage.setItem(
-      VOTE_KEY,
-      String(index)
-    );
-  } catch (error) {
-    foot.textContent =
-      "Не удалось сохранить голос";
-    return;
-  }
-
-  showResults();
-});
-
-if (getMyVote() !== null) {
-  showResults();
-}
-</script>
+    if (localStorage.getItem(VOTED_KEY) === "true") {
+      showResults();
+    }
+  </script>
 
 </body>
 </html>
